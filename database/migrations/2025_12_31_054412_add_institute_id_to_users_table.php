@@ -15,7 +15,7 @@ return new class extends Migration
 
             // Add institute_id column
             $table->unsignedBigInteger('institute_id')
-                  ->nullable()
+                  ->default(0)
                   ->after('id');
         });
     }
