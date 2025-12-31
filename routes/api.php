@@ -3,8 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ContactController;
-use App\Http\Controllers\Api\UserController;
 
 
 
@@ -23,9 +21,7 @@ use App\Http\Controllers\Api\UserController;
 //     return $request->user();
 // });
 
-Route::get('/splash-screen', [AuthController::class, 'splashScreens']);
 Route::get('/timezones', [AuthController::class, 'getTimeZones']);
-Route::post('/contact', [ContactController::class, 'submitContact']);
 
 Route::group(['prefix'=>'auth'], function(){
     Route::post('/send-phone-otp', [AuthController::class, 'sendPhoneOtp']);
