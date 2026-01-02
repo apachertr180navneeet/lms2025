@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Admin\{
     AdminAuthController,
     InstitutesController,
+    SubscriptionPlanController
 };
 
 /*
@@ -81,6 +82,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::post('/', 'store')->name('store');
             Route::put('{id}', 'update')->name('update');
+
+            Route::post('status', 'status')->name('status');
+            Route::delete('delete/{id}', 'destroy')->name('destroy');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUBSCRIPTION PLANS MODULE
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('subscription-plans')->name('subscription.plans.')->controller(SubscriptionPlanController::class)->group(function () {
+
+            Route::get('/', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::get('edit/{id}', 'edit')->name('edit');
+
+            Route::get('all', 'getAll')->name('getall');
+            Route::get('{id}', 'get')->name('show');
+
+            Route::post('/', 'store')->name('store');
+            Route::post('{id}', 'update')->name('update');
 
             Route::post('status', 'status')->name('status');
             Route::delete('delete/{id}', 'destroy')->name('destroy');
