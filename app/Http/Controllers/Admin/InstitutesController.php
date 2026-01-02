@@ -118,4 +118,48 @@ class InstitutesController extends Controller
             ]);
         }
     }
+
+
+    /**
+     * Display institute create page
+     */
+    public function edit($id)
+    {
+        $institute = Institute::findOrFail($id);
+
+        return view('admin.institutes.edit', compact('institute'));
+    }
+
+     /**
+     * Update institute
+     */
+    public function update(Request $request, $id)
+    {
+        $institute = Institute::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:institutes,email,' . $institute->id,
+            'phone' => 'required|digits_between:10,15',
+            'city'  => 'required|string|max:100',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $institute->update([
+            'name'  => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'city'  => $request->city,
+        ]);
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Institute updated successfully'
+        ]);
+    }
 }

@@ -74,7 +74,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::get('/', 'index')->name('index');
             Route::get('create', 'create')->name('create');
-            Route::get('{id}/edit', 'edit')->name('edit');
+            Route::get('edit/{id}', 'edit')->name('edit');
 
             Route::get('all', 'getAll')->name('getall');
             Route::get('{id}', 'get')->name('show');
