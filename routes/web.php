@@ -2,57 +2,97 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\HomeController;
-use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\{
+    AdminAuthController,
+    InstitutesController,
+};
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| FRONTEND ROUTES
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/', 'index')->name('home');
+    Route::get('/home', 'index');
+});
 
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('admin')->name('admin.')->group(function () {
 
-Route::get('/', [HomeController::class, 'index'])->name('/');
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN AUTH (GUEST ONLY)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('guest:admin')->controller(AdminAuthController::class)->group(function () {
+        Route::get('/', 'login');
+        Route::get('login', 'login')->name('login');
+        Route::post('login', 'postLogin')->name('login.post');
 
-Route::name('admin.')->prefix('admin')->group(function () {
-    Route::get('/', [AdminAuthController::class, 'index']);
+        Route::get('forget-password', 'showForgetPasswordForm')->name('password.request');
+        Route::post('forget-password', 'submitForgetPasswordForm')->name('password.email');
 
-    Route::get('login', [AdminAuthController::class, 'login'])->name('login');
-
-    Route::post('login', [AdminAuthController::class, 'postLogin'])->name('login.post');
-
-    Route::get('forget-password', [AdminAuthController::class, 'showForgetPasswordForm'])->name('forget.password.get');
-
-    Route::post('forget-password', [AdminAuthController::class, 'submitForgetPasswordForm'])->name('forget.password.post');
-
-    Route::get('reset-password/{token}', [AdminAuthController::class, 'showResetPasswordForm'])->name('reset.password.get');
-
-    Route::post('reset-password', [AdminAuthController::class, 'submitResetPasswordForm'])->name('reset.password.post');
-
-    Route::middleware(['admin'])->group(function () {
-    	Route::get('dashboard', [AdminAuthController::class, 'adminDashboard'])->name('dashboard');
-
-        Route::get('change-password', [AdminAuthController::class, 'changePassword'])->name('change.password');
-
-        Route::post('update-password', [AdminAuthController::class, 'updatePassword'])->name('update.password');
-
-        Route::get('logout', [AdminAuthController::class, 'logout'])->name('logout');
-
-        Route::get('profile', [AdminAuthController::class, 'adminProfile'])->name('profile');
-
-        Route::post('profile', [AdminAuthController::class, 'updateAdminProfile'])->name('update.profile');
+        Route::get('reset-password/{token}', 'showResetPasswordForm')->name('password.reset');
+        Route::post('reset-password', 'submitResetPasswordForm')->name('password.update');
     });
 
+    /*
+    |--------------------------------------------------------------------------
+    | PROTECTED ADMIN ROUTES
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('admin')->group(function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | DASHBOARD & PROFILE
+        |--------------------------------------------------------------------------
+        */
+        Route::controller(AdminAuthController::class)->group(function () {
+            Route::get('dashboard', 'adminDashboard')->name('dashboard');
+
+            Route::get('profile', 'adminProfile')->name('profile');
+            Route::post('profile', 'updateAdminProfile')->name('update.profile');
+
+            Route::get('change-password', 'changePassword')->name('change.password');
+            Route::post('change-password', 'updatePassword')->name('update.password');
+
+            Route::post('logout', 'logout')->name('logout');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | INSTITUTES MODULE
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('institutes')->name('institutes.')->controller(InstitutesController::class)->group(function () {
+
+            Route::get('/', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::get('{id}/edit', 'edit')->name('edit');
+
+            Route::get('all', 'getAll')->name('getall');
+            Route::get('{id}', 'get')->name('show');
+
+            Route::post('/', 'store')->name('store');
+            Route::put('{id}', 'update')->name('update');
+
+            Route::patch('{id}/status', 'status')->name('status');
+            Route::delete('{id}', 'destroy')->name('destroy');
+        });
+    });
 });
 
-Route::middleware(['auth'])->group(function () {
-
+/*
+|--------------------------------------------------------------------------
+| AUTHENTICATED USER ROUTES (FUTURE)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    // future user routes
 });
-
-
-

@@ -19,5 +19,12 @@
 				<div data-i18n="Dashboard">Dashboard</div>
 			</a>
 		</li>
+
+		<li class="menu-item {{ request()->is('admin/institutes') ? 'active' : ''}}">
+			<a href="{{route('admin.institutes.index')}}" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-home-circle"></i>
+				<div data-i18n="Dashboard">Institute</div>
+			</a>
+		</li>
 	</ul>
 </aside>
