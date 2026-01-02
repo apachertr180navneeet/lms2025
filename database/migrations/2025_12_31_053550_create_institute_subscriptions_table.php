@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('subscription_plan_id')->constrained()->cascadeOnDelete();
             $table->date('start_date');
             $table->date('end_date');
+            $table->bigInteger('teacher_count')->nullable()->default(0);
+            $tqable->bigInteger('student_count')->nullable()->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

@@ -33,5 +33,12 @@
 				<div data-i18n="Dashboard">Subscription Plans</div>
 			</a>
 		</li>
+
+		<li class="menu-item {{ request()->is('admin/institute-subscriptions') ? 'active' : ''}}">
+			<a href="{{route('admin.institute.subscriptions.index')}}" class="menu-link">
+				<i class="menu-icon tf-icons bx bx-home-circle"></i>
+				<div data-i18n="Dashboard">Institute Subscriptions</div>
+			</a>
+		</li>
 	</ul>
 </aside>

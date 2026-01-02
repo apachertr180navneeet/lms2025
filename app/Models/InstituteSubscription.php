@@ -22,6 +22,8 @@ class InstituteSubscription extends Model
         'subscription_plan_id',
         'start_date',
         'end_date',
+        'teacher_count',
+        'student_count',
         'is_active',
     ];
 
