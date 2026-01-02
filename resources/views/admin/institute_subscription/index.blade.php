@@ -37,10 +37,12 @@
             </h5>
         </div>
         <div class="col-md-6 text-end">
-            <a href="{{ route('admin.institute.subscriptions.create') }}"
-               class="btn btn-primary">
-                <i class="bx bx-plus"></i> Assign Subscription
-            </a>
+            @can('manage subscriptions')
+                <a href="{{ route('admin.institute.subscriptions.create') }}"
+                   class="btn btn-primary">
+                    <i class="bx bx-plus"></i> Assign Subscription
+                </a>
+            @endcan
         </div>
     </div>
 
@@ -74,6 +76,12 @@
 <script>
 $(document).ready(function () {
 
+    @can('manage subscriptions')
+    var canManageSubscriptions = true;
+    @else
+    var canManageSubscriptions = false;
+    @endcan
+
     $('#subscriptionTable').DataTable({
         processing: true,
         ajax: "{{ route('admin.institute.subscriptions.getall') }}",
@@ -95,18 +103,20 @@ $(document).ready(function () {
                 orderable: false,
                 searchable: false,
                 render: function (id) {
-                    return `
-                        <div class="action-btns">
-                            <a href="{{ url('admin/institute-subscriptions/edit') }}/${id}"
-                               class="btn btn-warning btn-sm">
-                                Edit
-                            </a>
-                            <button class="btn btn-danger btn-sm"
-                                onclick="deleteSubscription(${id})">
-                                Delete
-                            </button>
-                        </div>
-                    `;
+                    let html = '<div class="action-btns">';
+                    if (canManageSubscriptions) {
+                        html += `\
+                            <a href="{{ url('admin/institute-subscriptions/edit') }}/${id}"\
+                               class="btn btn-warning btn-sm">\
+                                Edit\
+                            </a>\
+                            <button class="btn btn-danger btn-sm"\
+                                onclick="deleteSubscription(${id})">\
+                                Delete\
+                            </button>`;
+                    }
+                    html += '</div>';
+                    return html;
                 }
             }
         ]

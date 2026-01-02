@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\{
     AdminAuthController,
     InstitutesController,
     SubscriptionPlanController,
-    InstituteSubscriptionsController
+    InstituteSubscriptionsController,
+    RoleController,
+    PermissionController
 };
 
 /*
@@ -31,7 +33,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     | ADMIN AUTH (GUEST ONLY)
     |--------------------------------------------------------------------------
     */
-    Route::middleware('guest:admin')->controller(AdminAuthController::class)->group(function () {
+    Route::middleware('guest:admin')
+        ->controller(AdminAuthController::class)
+        ->group(function () {
+
         Route::get('/', 'login');
         Route::get('login', 'login')->name('login');
         Route::post('login', 'postLogin')->name('login.post');
@@ -56,6 +61,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         |--------------------------------------------------------------------------
         */
         Route::controller(AdminAuthController::class)->group(function () {
+
             Route::get('dashboard', 'adminDashboard')->name('dashboard');
 
             Route::get('profile', 'adminProfile')->name('profile');
@@ -72,7 +78,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         | INSTITUTES MODULE
         |--------------------------------------------------------------------------
         */
-        Route::prefix('institutes')->name('institutes.')->controller(InstitutesController::class)->middleware('permission:manage users')->group(function () {
+        Route::prefix('institutes')
+            ->name('institutes.')
+            ->controller(InstitutesController::class)
+            ->middleware('permission:manage users')
+            ->group(function () {
 
             Route::get('/', 'index')->name('index');
             Route::get('create', 'create')->name('create');
@@ -93,7 +103,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         | SUBSCRIPTION PLANS MODULE
         |--------------------------------------------------------------------------
         */
-        Route::prefix('subscription-plans')->name('subscription.plans.')->controller(SubscriptionPlanController::class)->group(function () {
+        Route::prefix('subscription-plans')
+            ->name('subscription.plans.')
+            ->controller(SubscriptionPlanController::class)
+            ->group(function () {
 
             Route::get('/', 'index')->name('index');
             Route::get('create', 'create')->name('create');
@@ -109,13 +122,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('delete/{id}', 'destroy')->name('destroy');
         });
 
-
         /*
         |--------------------------------------------------------------------------
         | INSTITUTE SUBSCRIPTIONS MODULE
         |--------------------------------------------------------------------------
         */
-        Route::prefix('institute-subscriptions')->name('institute.subscriptions.')->controller(InstituteSubscriptionsController::class)->group(function () {
+        Route::prefix('institute-subscriptions')
+            ->name('institute.subscriptions.')
+            ->controller(InstituteSubscriptionsController::class)
+            ->group(function () {
 
             Route::get('/', 'index')->name('index');
             Route::get('create', 'create')->name('create');
@@ -130,6 +145,49 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('status', 'status')->name('status');
             Route::delete('delete/{id}', 'destroy')->name('destroy');
         });
+
+        /*
+        |--------------------------------------------------------------------------
+        | ROLES MODULE
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('roles')
+            ->name('roles.')
+            ->controller(RoleController::class)
+            ->middleware('permission:manage roles')
+            ->group(function () {
+
+            Route::get('/', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::get('edit/{role}', 'edit')->name('edit');
+
+            Route::post('/', 'store')->name('store');
+            Route::post('update/{role}', 'update')->name('update');
+
+            Route::delete('delete/{role}', 'destroy')->name('destroy');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | PERMISSIONS MODULE
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('permissions')
+            ->name('permissions.')
+            ->controller(PermissionController::class)
+            ->middleware('permission:manage permissions')
+            ->group(function () {
+
+            Route::get('/', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::get('edit/{permission}', 'edit')->name('edit');
+
+            Route::post('/', 'store')->name('store');
+            Route::post('update/{permission}', 'update')->name('update');
+
+            Route::delete('delete/{permission}', 'destroy')->name('destroy');
+        });
+
     });
 });
 

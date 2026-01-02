@@ -37,9 +37,11 @@
             </h5>
         </div>
         <div class="col-md-6 text-end">
-            <a href="{{ route('admin.institutes.create') }}" class="btn btn-primary">
-                <i class="bx bx-plus"></i> Add Institute
-            </a>
+            @can('manage users')
+                <a href="{{ route('admin.institutes.create') }}" class="btn btn-primary">
+                    <i class="bx bx-plus"></i> Add Institute
+                </a>
+            @endcan
         </div>
     </div>
 
@@ -72,6 +74,12 @@
 <script>
     $(document).ready(function () {
 
+        @can('manage users')
+        var canManageUsers = true;
+        @else
+        var canManageUsers = false;
+        @endcan
+
         let table = $('#instituteTable').DataTable({
             processing: true,
             ajax: "{{ route('admin.institutes.getall') }}",
@@ -82,36 +90,39 @@
                 { data: 'city' },
                 {
                     data: 'status',
-                    render: function (data, type, row) {
-                        let checked = data == 1 ? 'checked' : '';
-                        return `
-                            <div class="form-check form-switch">
-                                <input class="form-check-input toggleStatus"
-                                    type="checkbox"
-                                    data-id="${row.id}"
-                                    ${checked}>
-                            </div>
-                        `;
-                    }
+                        render: function (data, type, row) {
+                            let checked = data == 1 ? 'checked' : '';
+                            let disabled = canManageUsers ? '' : 'disabled';
+                            return `
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input toggleStatus"
+                                        type="checkbox"
+                                        data-id="${row.id}"
+                                        ${checked} ${disabled}>
+                                </div>
+                            `;
+                        }
                 },
                 {
                     data: 'id',
                     orderable: false,
                     searchable: false,
                     render: function (id) {
-                        return `
-                            <div class="action-btns">
-                                <a href="{{ url('admin/institutes/edit') }}/${id}"
-                                class="btn btn-warning btn-sm">
-                                    Edit
-                                </a>
-                                <button class="btn btn-danger btn-sm"
-                                    onclick="deleteInstitute(${id})">
-                                    Delete
-                                </button>
-                            </div>
-                        `;
-                    }
+                            let html = '<div class="action-btns">';
+                            if (canManageUsers) {
+                                html += `\
+                                    <a href="{{ url('admin/institutes/edit') }}/${id}"\
+                                    class="btn btn-warning btn-sm">\
+                                        Edit\
+                                    </a>\
+                                    <button class="btn btn-danger btn-sm"\
+                                        onclick="deleteInstitute(${id})">\
+                                        Delete\
+                                    </button>`;
+                            }
+                            html += '</div>';
+                            return html;
+                        }
                 }
             ]
         });

@@ -37,9 +37,11 @@
             </h5>
         </div>
         <div class="col-md-6 text-end">
-            <a href="{{ route('admin.subscription.plans.create') }}" class="btn btn-primary">
-                <i class="bx bx-plus"></i> Add Plan
-            </a>
+            @can('manage subscriptions')
+                <a href="{{ route('admin.subscription.plans.create') }}" class="btn btn-primary">
+                    <i class="bx bx-plus"></i> Add Plan
+                </a>
+            @endcan
         </div>
     </div>
 
@@ -72,6 +74,12 @@
 <script>
 $(document).ready(function () {
 
+    @can('manage subscriptions')
+    var canManageSubscriptions = true;
+    @else
+    var canManageSubscriptions = false;
+    @endcan
+
     let table = $('#planTable').DataTable({
         processing: true,
         ajax: "{{ route('admin.subscription.plans.getall') }}",
@@ -90,12 +98,13 @@ $(document).ready(function () {
                 data: 'status',
                 render: function (data, type, row) {
                     let checked = data == 1 ? 'checked' : '';
+                    let disabled = canManageSubscriptions ? '' : 'disabled';
                     return `
                         <div class="form-check form-switch">
                             <input class="form-check-input toggleStatus"
                                 type="checkbox"
                                 data-id="${row.id}"
-                                ${checked}>
+                                ${checked} ${disabled}>
                         </div>
                     `;
                 }
@@ -105,18 +114,20 @@ $(document).ready(function () {
                 orderable: false,
                 searchable: false,
                 render: function (id) {
-                    return `
-                        <div class="action-btns">
-                            <a href="{{ url('admin/subscription-plans/edit') }}/${id}"
-                               class="btn btn-warning btn-sm">
-                                Edit
-                            </a>
-                            <button class="btn btn-danger btn-sm"
-                                onclick="deletePlan(${id})">
-                                Delete
-                            </button>
-                        </div>
-                    `;
+                    let html = '<div class="action-btns">';
+                    if (canManageSubscriptions) {
+                        html += `\
+                            <a href="{{ url('admin/subscription-plans/edit') }}/${id}"\
+                               class="btn btn-warning btn-sm">\
+                                Edit\
+                            </a>\
+                            <button class="btn btn-danger btn-sm"\
+                                onclick="deletePlan(${id})">\
+                                Delete\
+                            </button>`;
+                    }
+                    html += '</div>';
+                    return html;
                 }
             }
         ]
