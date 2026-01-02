@@ -48,7 +48,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     | PROTECTED ADMIN ROUTES
     |--------------------------------------------------------------------------
     */
-    Route::middleware('admin')->group(function () {
+    Route::middleware(['admin', 'role:admin'])->group(function () {
 
         /*
         |--------------------------------------------------------------------------
@@ -72,7 +72,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         | INSTITUTES MODULE
         |--------------------------------------------------------------------------
         */
-        Route::prefix('institutes')->name('institutes.')->controller(InstitutesController::class)->group(function () {
+        Route::prefix('institutes')->name('institutes.')->controller(InstitutesController::class)->middleware('permission:manage users')->group(function () {
 
             Route::get('/', 'index')->name('index');
             Route::get('create', 'create')->name('create');

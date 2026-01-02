@@ -16,15 +16,17 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::user()) {
+        if (Auth::user()) {
             $user = Auth::user();
-            if($user->role == "admin") {
+
+            // Prefer Spatie's role check if available
+            if (method_exists($user, 'hasRole') ? $user->hasRole('admin') : ($user->role == 'admin')) {
                 return $next($request);
-            }else{
-                return redirect()->back();
             }
-        }else{
-            return redirect()->route('admin.login');
+
+            return redirect()->back();
         }
+
+        return redirect()->route('admin.login');
     }
 }
