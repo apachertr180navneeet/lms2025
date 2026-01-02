@@ -21,9 +21,8 @@ class SubscriptionPlan extends Model
     protected $fillable = [
         'name',
         'price',
-        'user_limit',
-        'storage_limit',
         'duration_days',
+        'decscription',
         'status',
     ];
 

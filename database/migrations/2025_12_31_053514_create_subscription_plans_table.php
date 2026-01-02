@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('price', 10, 2);
-            $table->integer('user_limit');
-            $table->integer('storage_limit'); // MB
             $table->integer('duration_days');
+            $table->text('description')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
             $table->softDeletes();
