@@ -34,8 +34,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('login', 'login')->name('login');
         Route::post('login', 'postLogin')->name('login.post');
 
-        Route::get('forget-password', 'showForgetPasswordForm')->name('password.request');
-        Route::post('forget-password', 'submitForgetPasswordForm')->name('password.email');
+        Route::get('forget-password', 'showForgetPasswordForm')->name('forget.password.get');
+        Route::post('forget-password', 'submitForgetPasswordForm')->name('forget.password.post');
 
         Route::get('reset-password/{token}', 'showResetPasswordForm')->name('password.reset');
         Route::post('reset-password', 'submitResetPasswordForm')->name('password.update');
