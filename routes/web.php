@@ -82,8 +82,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/', 'store')->name('store');
             Route::put('{id}', 'update')->name('update');
 
-            Route::patch('{id}/status', 'status')->name('status');
-            Route::delete('{id}', 'destroy')->name('destroy');
+            Route::post('status', 'status')->name('status');
+            Route::delete('delete/{id}', 'destroy')->name('destroy');
         });
     });
 });

@@ -12,8 +12,8 @@
     }
     .form-label { font-weight: 600; }
     .form-control { background: #f5f5f5; }
-    .is-invalid { border-color: #dc3545; }
-    .error-text { font-size: 12px; color: #dc3545; }
+    .is-invalid { border-color: #dc3545 !important; }
+    .error-text { font-size: 12px; color: #dc3545; margin-top: 4px; }
 </style>
 @endsection
 
@@ -65,16 +65,10 @@
 <script>
 $(document).ready(function () {
 
-    /* ✅ CSRF TOKEN SETUP (IMPORTANT) */
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    $('#instituteForm').submit(function(e) {
+    $('#instituteForm').submit(function (e) {
         e.preventDefault();
 
+        // Reset errors
         $('.error-text').text('');
         $('.form-control').removeClass('is-invalid');
 
@@ -83,37 +77,37 @@ $(document).ready(function () {
             type: "POST",
             data: $(this).serialize(),
 
-            success: function(response) {
+            success: function (res) {
 
-                if (typeof toastr !== 'undefined') {
-                    toastr.success(response.message);
+                // ✅ IMPORTANT: check `status` (not `success`)
+                if (res.status === true) {
+
+                    toastr.success(res.message);
+
+                    $('#instituteForm')[0].reset();
+
+                    setTimeout(function () {
+                        window.location.href = "{{ route('admin.institutes.index') }}";
+                    }, 1200);
+
+                } else {
+                    toastr.error(res.message || 'Something went wrong');
                 }
-
-                $('#instituteForm')[0].reset();
-
-                setTimeout(function () {
-                    window.location.href = "{{ route('admin.institutes.index') }}";
-                }, 1200);
             },
 
-            error: function(xhr) {
+            error: function (xhr) {
 
                 if (xhr.status === 422) {
 
-                    if (typeof toastr !== 'undefined') {
-                        toastr.error('Please fix the errors below');
-                    }
+                    toastr.error('Please fix the errors below');
 
-                    $.each(xhr.responseJSON.errors, function(key, value) {
+                    $.each(xhr.responseJSON.errors, function (key, value) {
                         $('[name="'+key+'"]').addClass('is-invalid');
                         $('.'+key+'_error').text(value[0]);
                     });
 
                 } else {
-
-                    if (typeof toastr !== 'undefined') {
-                        toastr.error('Something went wrong');
-                    }
+                    toastr.error('Server error, please try again');
                 }
             }
         });

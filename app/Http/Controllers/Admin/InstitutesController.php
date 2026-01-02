@@ -79,4 +79,43 @@ class InstitutesController extends Controller
             'message' => 'Institute created successfully'
         ]);
     }
+
+    /**
+     * Update status (1 / 0).
+     */
+    public function status(Request $request)
+    {
+        try {
+            $institute = Institute::find($request->id);
+            $institute->status = $request->status;
+            $institute->save();
+
+            return response()->json(['success' => true]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Delete subscription plan (Soft Delete).
+     */
+    public function destroy($id)
+    {
+        try {
+            Institute::where('id', $id)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Institute deleted successfully',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
 }
